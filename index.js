@@ -26,6 +26,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const userCollection = client.db("taskOne").collection("users");
+    const productCollection = client.db("taskOne").collection("products");
     // running
     app.get("/", (req, res) => {
       res.send("running");
@@ -48,6 +49,13 @@ async function run() {
     app.get("/user/:email", async (req, res) => {
       const email = req.params.email;
       const result = await userCollection.findOne({ email });
+      res.send(result);
+    });
+
+    // get all products
+    app.get("/products", async (req, res) => {
+      const result = await productCollection.find().toArray();
+      console.log(result.length);
       res.send(result);
     });
 
