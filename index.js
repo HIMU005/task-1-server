@@ -7,7 +7,7 @@ const port = process.env.PORT || 5000;
 const app = express();
 
 const corsOptions = {
-  origin: ["http://localhost:5173"],
+  origin: ["http://localhost:5173", "https://taskonesearching.vercel.app"],
   credentials: true,
   optionSuccessStatus: 200,
 };
@@ -56,10 +56,32 @@ async function run() {
 
     // get all products
     app.get("/products", async (req, res) => {
-      const { query } = req;
-      console.log(query);
-      const result = await productCollection.find().toArray();
-      res.send(result);
+      const {
+        max,
+        min,
+        singleBrand,
+        singleCategory,
+        sorted,
+        page = 1,
+        perPage = 10,
+      } = req.query;
+      const query = {};
+      if (singleCategory) query.category = singleCategory;
+      if (singleBrand) query.brand = singleBrand;
+      if (min || max) {
+        query.price = {};
+        if (min) query.price.$gte = parseFloat(min);
+        if (max) query.price.$lte = parseFloat(max);
+      }
+      const sort = {};
+      if (sorted === "lowToHigh") sort.price = 1;
+      else if (sorted === "HighToLow") sort.price = -1;
+      else if (sorted === "Newest") sort.creationDateTime = -1;
+      const options = { sort };
+      const result = await productCollection.find(query, options).toArray();
+      const first = (parseInt(page) - 1) * parseInt(perPage);
+      const document = result.slice(first, first + parseInt(perPage));
+      res.send(document);
     });
 
     // get product count from backend
