@@ -56,6 +56,8 @@ async function run() {
 
     // get all products
     app.get("/products", async (req, res) => {
+      const { query } = req;
+      console.log(query);
       const result = await productCollection.find().toArray();
       res.send(result);
     });
