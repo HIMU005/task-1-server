@@ -28,6 +28,7 @@ async function run() {
     const userCollection = client.db("taskOne").collection("users");
     const productCollection = client.db("taskOne").collection("products");
     const brandCollection = client.db("taskOne").collection("brands");
+    const categoryCollection = client.db("taskOne").collection("category");
     // running
     app.get("/", (req, res) => {
       res.send("running");
@@ -68,6 +69,11 @@ async function run() {
     // get brand name
     app.get("/brands", async (req, res) => {
       const result = await brandCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.get("/category", async (req, res) => {
+      const result = await categoryCollection.find().toArray();
       res.send(result);
     });
 
