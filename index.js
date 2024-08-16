@@ -55,8 +55,12 @@ async function run() {
     // get all products
     app.get("/products", async (req, res) => {
       const result = await productCollection.find().toArray();
-      console.log(result.length);
       res.send(result);
+    });
+
+    app.get("/productCount", async (req, res) => {
+      const count = await productCollection.estimatedDocumentCount();
+      res.send({ count });
     });
 
     await client.db("admin").command({ ping: 1 });
