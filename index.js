@@ -27,6 +27,7 @@ async function run() {
   try {
     const userCollection = client.db("taskOne").collection("users");
     const productCollection = client.db("taskOne").collection("products");
+    const brandCollection = client.db("taskOne").collection("brands");
     // running
     app.get("/", (req, res) => {
       res.send("running");
@@ -58,9 +59,16 @@ async function run() {
       res.send(result);
     });
 
+    // get product count from backend
     app.get("/productCount", async (req, res) => {
       const count = await productCollection.estimatedDocumentCount();
       res.send({ count });
+    });
+
+    // get brand name
+    app.get("/brands", async (req, res) => {
+      const result = await brandCollection.find().toArray();
+      res.send(result);
     });
 
     await client.db("admin").command({ ping: 1 });
