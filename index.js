@@ -7,7 +7,7 @@ const port = process.env.PORT || 5000;
 const app = express();
 
 const corsOptions = {
-  origin: ["http://localhost:5173", "https://taskonesearching.vercel.app"],
+  origin: ["http://localhost:5173", "https://first-task-1ad9f.web.app"],
   credentials: true,
   optionSuccessStatus: 200,
 };
@@ -98,6 +98,17 @@ async function run() {
 
     app.get("/category", async (req, res) => {
       const result = await categoryCollection.find().toArray();
+      res.send(result);
+    });
+
+    // only searching products api here
+    app.get("/searched", async (req, res) => {
+      const { search } = req.query;
+      const filter = {};
+      if (search) {
+        filter.productName = { $regex: search, $options: "i" };
+      }
+      const result = await productCollection.find(filter).toArray();
       res.send(result);
     });
 
